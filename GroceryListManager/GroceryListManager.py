@@ -3,14 +3,14 @@ import os
 grocery_list = {}
 
 f = open("grocery_list.txt", "r")
-if len(f.read()) > 0:
-    for items in f.read().split("\n"):
+if os.path.exists("grocery_list.txt"):
+    for items in f.read().splitlines():
         keys = items.split(":")
         grocery_list[keys[0]] = keys[1]
 
 def grocery_inserter(grocery_list):
     os.system('cls')
-    item = input("Enter the item you want to add to the list: ").lower()
+    item = input("Enter the item you want to add to the list: ").lower().strip()
     quantity = int(input("Enter the amount of the item you want to add: "))
     if item not in grocery_list.keys():
         grocery_list[item] = quantity
@@ -81,13 +81,15 @@ menu_options = {"Add item": grocery_inserter,
                 "Exit": stop_list,
                 }
 
+menu_options_lower = {key.lower(): value for key, value in menu_options.items()}
+
 while True:
     print("\nWelcome to Grocery List Manager")
     for index, option in enumerate(menu_options):
         print(f"{index + 1}. {option}")
-    usr_choice = input("Input your choice: ")
-    if usr_choice in menu_options.keys():
-        print(menu_options[usr_choice](grocery_list))
+    usr_choice = input("Input your choice: ").lower()
+    if usr_choice in menu_options_lower.keys():
+        print(menu_options_lower[usr_choice](grocery_list))
     else:
         try:
             menu_option = list(menu_options.values())[int(usr_choice) - 1]
