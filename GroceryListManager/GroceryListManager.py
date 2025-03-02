@@ -24,7 +24,7 @@ def grocery_updater(grocery_list):
     print("\nThe grocery list currently has the following items:")
     for item, quantity in grocery_list.items():
         print(f"'{item}' with a quantity of: {quantity}")
-    item = input("Enter the name item you want to update: ").lower()
+    item = input("Enter the name item you want to update: ").lower().strip()
     quantity = int(input("Enter the updated quantity: "))
     if quantity > 0 and item in grocery_list.keys():
         grocery_list[item] = quantity
@@ -40,7 +40,7 @@ def grocery_remover(grocery_list):
     print("The grocery list currently has the following items:")
     for item, quantity in grocery_list.items():
         print(f"'{item}' with a quantity of: {quantity}")
-    item = input("\nPlease enter the name of the item you want to remove: ")
+    item = input("\nPlease enter the name of the item you want to remove: ").lower().strip()
     if item in grocery_list.keys():
         del grocery_list[item]
         os.system('cls')
