@@ -21,6 +21,7 @@ class BankSystem:
         self.logged_menu_lower = {key.lower(): value for key, value in self.loggedMenu.items()}
 
     def register(self):
+        os.system('cls')
         pin = input("Enter your pin")
         if not pin.isdigit() and len(pin) != 4:
             print("Pin must be a 4 digit value")
@@ -33,6 +34,7 @@ class BankSystem:
             print("Successfully registered")
 
     def login(self):
+        os.system('cls')
         pin = input("Enter your pin: ")
         if not os.path.exists(f"{pin}.txt"):
             print("User does not exist")
@@ -43,18 +45,22 @@ class BankSystem:
             self.account = UserAccount(pin, f.read())
 
     def check_balance(self):
+        os.system('cls')
         print(f"Your current balance is: {self.account.balance}")
 
     def deposit(self):
+        os.system('cls')
         amount = input("Enter the amount you would like to deposit: ")
         self.account.deposit(amount)
         self.account.save()
     def withdraw(self):
+        os.system('cls')
         amount = int(input("Enter the amount you would like to withdraw: "))
         self.account.withdraw(amount)
         self.account.save()
 
     def transfer(self):
+        os.system('cls')
         receiver = input("Input the destination account: ")
         amount = int(input(f"Input the amount of money you would like to send, it must be less than your current balance({self.account.balance}): "))
         self.account.balance -= amount
@@ -65,6 +71,7 @@ class BankSystem:
         f.write(str(tmp))
 
     def main(self):
+        os.system('cls')
         while True:
             if self.account is None:
                 print("welcome to bank")
@@ -87,6 +94,7 @@ class BankSystem:
                     menu_option()
 
     def logout(self):
+        os.system('cls')
         self.account = None
 
 class UserAccount:
