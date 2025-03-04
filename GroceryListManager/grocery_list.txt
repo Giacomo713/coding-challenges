@@ -1,0 +1,5 @@
+potatoes:12
+bread:1
+zaza:4
+pasta:2
+fruit:5
