@@ -1,13 +1,12 @@
 import os
 
-LoggedIn = False
-
 class BankSystem:
     def __init__(self):
         self.account = None
         self.loginMenu = {
             "Log in": self.login,
-            "Register": self.register
+            "Register": self.register,
+            "Exit": self.exit
         }
 
         self.loggedMenu = {
@@ -22,15 +21,15 @@ class BankSystem:
 
     def register(self):
         os.system('cls')
-        pin = input("Enter your pin")
-        if not pin.isdigit() and len(pin) != 4:
+        pin = input("Enter the pin you would like to register: ")
+        if not pin.isdigit() or len(pin) != 4:
             print("Pin must be a 4 digit value")
 
-        if os.path.exists(f"{pin}.txt"):
+        elif os.path.exists(f"{pin}.txt"):
             print("User already registered")
         else:
             f = open(f"{pin}.txt", "x")
-            f.write("0")
+            f.write("0.00")
             print("Successfully registered")
 
     def login(self):
@@ -46,68 +45,96 @@ class BankSystem:
 
     def check_balance(self):
         os.system('cls')
-        print(f"Your current balance is: {self.account.balance}")
+        balance = f"{self.account.balance:,.2f}"
+        print(f"Your current balance is: €{balance}")
 
     def deposit(self):
         os.system('cls')
-        amount = input("Enter the amount you would like to deposit: ")
-        self.account.deposit(amount)
-        self.account.save()
+        amount = float(input("Enter the amount you would like to deposit: "))
+        if amount > 0:
+            self.account.deposit(amount)
+            self.account.save()
+        else:
+            print("Please enter a positive amount to deposit")
+
     def withdraw(self):
         os.system('cls')
-        amount = int(input("Enter the amount you would like to withdraw: "))
-        self.account.withdraw(amount)
-        self.account.save()
+        amount = float(input("Enter the amount you would like to withdraw: "))
+        if amount > 0:
+            self.account.withdraw(amount)
+            self.account.save()
+        else:
+            print("Please input a positive amount to withdraw")
 
     def transfer(self):
         os.system('cls')
+        balance = f"{self.account.balance:,}"
         receiver = input("Input the destination account: ")
-        amount = int(input(f"Input the amount of money you would like to send, it must be less than your current balance({self.account.balance}): "))
+        amount = float(input(f"Input the amount of money you would like to send, it must be less than your current balance(€{balance}): "))
         self.account.balance -= amount
         self.account.save()
-        f = open(f"{receiver}.txt", "r")
-        tmp = int(f.read()) + amount
-        f = open(f"{receiver}.txt", "w")
-        f.write(str(tmp))
+        if amount > 0:
+            try:
+                f = open(f"{receiver}.txt", "r")
+                tmp = float(f.read()) + amount
+                f = open(f"{receiver}.txt", "w")
+                f.write(str(tmp))
+            except FileNotFoundError:
+                print("Destination account doesnt exist!")
+        else:
+            print("Please input a positive amount to transfer")
 
     def main(self):
         os.system('cls')
         while True:
             if self.account is None:
-                print("welcome to bank")
+                print("Welcome to PythonBank!")
                 for index, item in enumerate(self.loginMenu):
                     print(f"{[index + 1]} {item}")
                 usrChoice = input("Select your option: ").lower()
                 if usrChoice in self.login_menu_lower.keys():
                     self.login_menu_lower[usrChoice]()
                 else:
-                    menu_option = list(self.loginMenu.values())[int(usrChoice) - 1]
-                    menu_option()
+                    try:
+                        menu_option = list(self.loginMenu.values())[int(usrChoice) - 1]
+                        menu_option()
+                    except ValueError:
+                        os.system('cls')
+                        print("Please input a valid menu selection.")
             else:
                 try:
                     for index, item in enumerate(self.loggedMenu):
                         print(f"{[index + 1]} {item}")
                     usrChoice = input("Select your option: ").lower()
                     self.logged_menu_lower[usrChoice]()
-                except:
-                    menu_option = list(self.loggedMenu.values())[int(usrChoice) - 1]
-                    menu_option()
+                except KeyError:
+                    try:
+                        menu_option = list(self.loggedMenu.values())[int(usrChoice) - 1]
+                        menu_option()
+                    except ValueError:
+                        os.system('cls')
+                        print("Please input a valid menu selection.")
 
     def logout(self):
         os.system('cls')
         self.account = None
 
+    def exit(self):
+        exit()
+
 class UserAccount:
     def __init__(self, pin, balance):
         self.pin = pin
-        self.balance = int(balance)
+        self.balance = float(balance)
 
     def deposit(self, amount):
-        self.balance += int(amount)
+        self.balance += float(amount)
 
     def withdraw(self, amount):
-        if self.balance >= amount:
-            self.balance -= amount
+        if self.balance >= float(amount):
+            self.balance -= float(amount)
+        else:
+            print("Value you entered is greater than the amount of money present in your bank account!")
 
     def save(self):
         f = open(f"{self.pin}.txt", "w")
